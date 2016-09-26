@@ -1,5 +1,6 @@
 'use strict';
 
+const { json } = require('body-parser')
 const express = require('express')
 const mongoose = require('mongoose')
 
@@ -11,6 +12,8 @@ const port = process.env.PORT || 3000
 //Middlewares
 
 app.use(express.static('client'))
+app.use(json())
+
 
 //Gets
 app.get('/api/title', (req, res) =>
@@ -29,6 +32,14 @@ app.get('/api/messages', (req, res, err) =>
 	.then(messages => res.json({messages}))
 	.catch(err)
 )
+
+app.post('/api/messages', (req, res, err) => {
+	const msg = req.body
+	Message
+		.create(msg)
+		.then(msg => res.json(msg))
+		.catch(err)
+})
 
 //Listen
 mongoose.Promise = Promise
