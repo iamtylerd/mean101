@@ -1,0 +1,21 @@
+{
+  "name": "mean101",
+  "description": "first mean app",
+  "main": "server/server.js",
+  "authors": [
+    "iamtylerd <tylerdanielphotography@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/iamtylerd/mean101",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.5.8",
+    "bootstrap": "^3.3.7"
+  }
+}
