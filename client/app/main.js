@@ -1,8 +1,12 @@
 'use strict';
 
+const socket = io()
+socket.on('connect', () => console.log('Socket connected', socket))
+socket.on('disconnect', () => console.log(`Socket disconnected`))
+
 angular
 	.module('mean101', ['ngRoute'])
-	.config($routeProvider =>
+	.config(($routeProvider, $locationProvider) => {
 		$routeProvider
 			.when('/', {
 				controller: 'MainCtrl',
@@ -12,9 +16,14 @@ angular
 				controller: 'ChatCtrl',
 				templateUrl: 'partials/chat.html'
 			})
-	)
+		$locationProvider.html5Mode({
+			enabled: true,
+			requireBase: false
+		})
+	})
 	.controller('MainCtrl', function ($scope, $http) {
-		$http.get('/api/title')
+		$http
+		.get('/api/title')
 		.then(({data: { title }}) =>
 			$scope.title = title)
 	})
@@ -24,13 +33,26 @@ angular
 				author: $scope.author,
 				content: $scope.content
 			}
-
+			if (socket.connected) {
+			return socket.emit('postMessage', msg)
+			}
 			$http
 				.post('/api/messages', msg)
-					.then(() => $scope.messages.push(msg))
-					.catch(console.error)
+				.then(() => $scope.messages.push(msg))
+				.catch(console.error)
 		}
-		$http.get('/api/messages')
-		.then(({data: { messages }}) =>
-			$scope.messages = messages)
+		$http
+			.get('/api/messages')
+			.then(({data: { messages }}) =>
+				$scope.messages = messages)
+
+// Receive new messages and apply
+		socket.on('newMessage', (msg) => {
+			$scope.messages.push(msg)
+			$scope.$apply()
+		})
+
+
+
+
 	})
